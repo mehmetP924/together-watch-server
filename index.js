@@ -87,20 +87,21 @@ io.on("connection", (socket) => {
     emitUsers(roomCode);
   });
 
-  socket.on("chat-message", ({ roomCode, name, message }) => {
-    roomCode = String(roomCode || socket.data.roomCode || "").trim().toUpperCase();
-    if (!roomCode) return;
+  socket.on('chat-message', ({ roomCode, name, avatar, message }) => {
+  roomCode = String(roomCode || socket.data.roomCode || '').trim().toUpperCase();
+  if (!roomCode) return;
 
-    io.to(roomCode).emit("chat-message", {
-      userId: socket.id,
-      name: name || socket.data.name || "Kullanıcı",
-      message: String(message || "").slice(0, 500),
-      time: new Date().toLocaleTimeString("tr-TR", {
-        hour: "2-digit",
-        minute: "2-digit"
-      })
-    });
+  io.to(roomCode).emit('chat-message', {
+    userId: socket.id,
+    name: name || socket.data.name || 'Kullanıcı',
+    avatar: avatar || '🎬',
+    message: String(message || '').slice(0, 500),
+    time: new Date().toLocaleTimeString('tr-TR', {
+      hour: '2-digit',
+      minute: '2-digit'
+    })
   });
+});
 
   socket.on("video-event", (payload) => {
     const roomCode = String(payload?.roomCode || socket.data.roomCode || "").trim().toUpperCase();
