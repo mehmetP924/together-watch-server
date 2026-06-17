@@ -82,6 +82,36 @@ io.on('connection', (socket) => {
     socket.to(roomCode).emit('sync-request');
   });
 
+  socket.on('webrtc-offer', ({ roomCode, offer }) => {
+  roomCode = String(roomCode || socket.data.roomCode || '').trim().toUpperCase();
+  if (!roomCode) return;
+
+  socket.to(roomCode).emit('webrtc-offer', {
+    offer,
+    from: socket.id
+  });
+});
+
+socket.on('webrtc-answer', ({ roomCode, answer }) => {
+  roomCode = String(roomCode || socket.data.roomCode || '').trim().toUpperCase();
+  if (!roomCode) return;
+
+  socket.to(roomCode).emit('webrtc-answer', {
+    answer,
+    from: socket.id
+  });
+});
+
+socket.on('webrtc-ice-candidate', ({ roomCode, candidate }) => {
+  roomCode = String(roomCode || socket.data.roomCode || '').trim().toUpperCase();
+  if (!roomCode) return;
+
+  socket.to(roomCode).emit('webrtc-ice-candidate', {
+    candidate,
+    from: socket.id
+  });
+});
+
   socket.on('disconnect', () => {
     const roomCode = socket.data.roomCode;
     if (roomCode && rooms.has(roomCode)) {
@@ -100,3 +130,5 @@ const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
   console.log(`TogetherWatch server running on http://localhost:${PORT}`);
 });
+
+
